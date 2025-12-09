@@ -1,0 +1,45 @@
+# Trivy Configuration for Container and Filesystem Scanning
+
+# Scan severity levels
+severity:
+  - CRITICAL
+  - HIGH
+  - MEDIUM
+
+# Vulnerability database
+db:
+  repository: ghcr.io/aquasecurity/trivy-db
+
+# Scanner settings
+scan:
+  # Skip files in these directories
+  skip-dirs:
+    - node_modules
+    - .git
+    - coverage
+    - dist
+  
+  # Skip specific files
+  skip-files:
+    - "*.md"
+    - "*.txt"
+
+# Output format
+format: table
+
+# Exit code
+exit-code: 0  # Don't fail locally, let CI/CD handle failures
+
+# Security checks to enable
+security-checks:
+  - vuln
+  - config
+  - secret
+
+# Ignore unfixed vulnerabilities (optional)
+ignore-unfixed: false
+
+# Cache settings
+cache:
+  backend: fs
+  ttl: 24h

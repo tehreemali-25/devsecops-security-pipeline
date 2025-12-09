@@ -1,0 +1,237 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Live Demo - DevSecOps</title>
+    <link rel="stylesheet" href="style.css">
+    <link rel="stylesheet" href="pages.css">
+</head>
+
+<body>
+    <div class="container">
+        <header>
+            <div class="logo">🔒 DevSecOps</div>
+            <div class="subtitle">Automated Security Testing Pipeline</div>
+            <nav class="main-nav">
+                <a href="index.html" class="nav-link">Home</a>
+                <a href="tools.html" class="nav-link">Security Tools</a>
+                <a href="demo.html" class="nav-link active">Live Demo</a>
+                <a href="documentation.html" class="nav-link">Documentation</a>
+            </nav>
+        </header>
+
+        <!-- Demo Hero -->
+        <section class="demo-hero">
+            <h1>🧪 Interactive Demo</h1>
+            <p>Test our secure API endpoints in real-time</p>
+        </section>
+
+        <!-- Quick Actions -->
+        <section class="quick-actions">
+            <div class="action-card" onclick="testHealth()">
+                <div class="action-icon">💚</div>
+                <div class="action-title">Health Check</div>
+                <div class="action-desc">Test API Status</div>
+            </div>
+            <div class="action-card" onclick="scrollToSection('register')">
+                <div class="action-icon">✍️</div>
+                <div class="action-title">Register</div>
+                <div class="action-desc">Create Account</div>
+            </div>
+            <div class="action-card" onclick="scrollToSection('login')">
+                <div class="action-icon">🔑</div>
+                <div class="action-title">Login</div>
+                <div class="action-desc">Get JWT Token</div>
+            </div>
+            <div class="action-card" onclick="scrollToSection('profile')">
+                <div class="action-icon">👤</div>
+                <div class="action-title">Profile</div>
+                <div class="action-desc">Protected Route</div>
+            </div>
+        </section>
+
+        <!-- Health Check Section -->
+        <section class="demo-section">
+            <h2>💚 Health Check</h2>
+            <button class="demo-btn primary" onclick="testHealth()">Check API Status</button>
+            <div id="health-result" class="result-box"></div>
+        </section>
+
+        <!-- Register Section -->
+        <section class="demo-section" id="register">
+            <h2>✍️ Register New User</h2>
+            <div class="input-group">
+                <input type="text" id="reg-username" placeholder="Username" class="demo-input">
+                <input type="email" id="reg-email" placeholder="Email" class="demo-input">
+                <input type="password" id="reg-password" placeholder="Password (min 8 chars)" class="demo-input">
+            </div>
+            <button class="demo-btn primary" onclick="registerUser()">Create Account</button>
+            <div id="register-result" class="result-box"></div>
+        </section>
+
+        <!-- Login Section -->
+        <section class="demo-section" id="login">
+            <h2>🔑 Login</h2>
+            <div class="input-group">
+                <input type="text" id="login-username" placeholder="Username" class="demo-input">
+                <input type="password" id="login-password" placeholder="Password" class="demo-input">
+            </div>
+            <button class="demo-btn primary" onclick="loginUser()">Get JWT Token</button>
+            <div id="login-result" class="result-box"></div>
+        </section>
+
+        <!-- Profile Section -->
+        <section class="demo-section" id="profile">
+            <h2>👤 Get Profile (Protected)</h2>
+            <div class="input-group">
+                <input type="text" id="profile-token" placeholder="Paste JWT Token from login" class="demo-input">
+            </div>
+            <button class="demo-btn primary" onclick="getProfile()">Access Protected Route</button>
+            <div id="profile-result" class="result-box"></div>
+        </section>
+
+        <!-- Security Features -->
+        <section class="features-visual">
+            <h2>🔐 Security Features</h2>
+            <div class="features-row">
+                <div class="feature-box">
+                    <div class="feature-icon">🔑</div>
+                    <div class="feature-name">JWT Auth</div>
+                </div>
+                <div class="feature-box">
+                    <div class="feature-icon">🔒</div>
+                    <div class="feature-name">bcrypt Hash</div>
+                </div>
+                <div class="feature-box">
+                    <div class="feature-icon">✅</div>
+                    <div class="feature-name">Validation</div>
+                </div>
+                <div class="feature-box">
+                    <div class="feature-icon">⚡</div>
+                    <div class="feature-name">Rate Limit</div>
+                </div>
+            </div>
+        </section>
+
+        <footer>
+            <div class="footer-content">
+                <p><strong>Applied DevOps Project</strong></p>
+                <p>Security is not a feature, it's a mindset 🔐</p>
+            </div>
+        </footer>
+    </div>
+
+    <script>
+        function scrollToSection(id) {
+            document.getElementById(id).scrollIntoView({ behavior: 'smooth' });
+        }
+
+        async function testHealth() {
+            const resultBox = document.getElementById('health-result');
+            resultBox.innerHTML = '<div class="loading">⏳ Checking...</div>';
+
+            try {
+                const response = await fetch('/api/health');
+                const data = await response.json();
+                resultBox.innerHTML = `<div class="success">✅ API is healthy!<pre>${JSON.stringify(data, null, 2)}</pre></div>`;
+            } catch (error) {
+                resultBox.innerHTML = `<div class="error">❌ ${error.message}</div>`;
+            }
+        }
+
+        async function registerUser() {
+            const resultBox = document.getElementById('register-result');
+            const username = document.getElementById('reg-username').value;
+            const email = document.getElementById('reg-email').value;
+            const password = document.getElementById('reg-password').value;
+
+            if (!username || !email || !password) {
+                resultBox.innerHTML = '<div class="error">❌ Please fill all fields</div>';
+                return;
+            }
+
+            resultBox.innerHTML = '<div class="loading">⏳ Creating account...</div>';
+
+            try {
+                const response = await fetch('/api/auth/register', {
+                    method: 'POST',
+                    headers: { 'Content-Type': 'application/json' },
+                    body: JSON.stringify({ username, email, password })
+                });
+                const data = await response.json();
+
+                if (response.ok) {
+                    resultBox.innerHTML = `<div class="success">✅ Account created!<pre>${JSON.stringify(data, null, 2)}</pre></div>`;
+                    document.getElementById('login-username').value = username;
+                    document.getElementById('login-password').value = password;
+                } else {
+                    resultBox.innerHTML = `<div class="error">❌ Error<pre>${JSON.stringify(data, null, 2)}</pre></div>`;
+                }
+            } catch (error) {
+                resultBox.innerHTML = `<div class="error">❌ ${error.message}</div>`;
+            }
+        }
+
+        async function loginUser() {
+            const resultBox = document.getElementById('login-result');
+            const username = document.getElementById('login-username').value;
+            const password = document.getElementById('login-password').value;
+
+            if (!username || !password) {
+                resultBox.innerHTML = '<div class="error">❌ Please fill all fields</div>';
+                return;
+            }
+
+            resultBox.innerHTML = '<div class="loading">⏳ Logging in...</div>';
+
+            try {
+                const response = await fetch('/api/auth/login', {
+                    method: 'POST',
+                    headers: { 'Content-Type': 'application/json' },
+                    body: JSON.stringify({ username, password })
+                });
+                const data = await response.json();
+
+                if (response.ok) {
+                    resultBox.innerHTML = `<div class="success">✅ Login successful!<pre>${JSON.stringify(data, null, 2)}</pre><p class="token-tip">💡 Token auto-filled below!</p></div>`;
+                    document.getElementById('profile-token').value = data.token;
+                } else {
+                    resultBox.innerHTML = `<div class="error">❌ Login failed<pre>${JSON.stringify(data, null, 2)}</pre></div>`;
+                }
+            } catch (error) {
+                resultBox.innerHTML = `<div class="error">❌ ${error.message}</div>`;
+            }
+        }
+
+        async function getProfile() {
+            const resultBox = document.getElementById('profile-result');
+            const token = document.getElementById('profile-token').value;
+
+            if (!token) {
+                resultBox.innerHTML = '<div class="error">❌ Please provide JWT token (login first!)</div>';
+                return;
+            }
+
+            resultBox.innerHTML = '<div class="loading">⏳ Accessing protected route...</div>';
+
+            try {
+                const response = await fetch('/api/profile', {
+                    headers: { 'Authorization': `Bearer ${token}` }
+                });
+                const data = await response.json();
+
+                if (response.ok) {
+                    resultBox.innerHTML = `<div class="success">✅ Access granted!<pre>${JSON.stringify(data, null, 2)}</pre></div>`;
+                } else {
+                    resultBox.innerHTML = `<div class="error">❌ Access denied<pre>${JSON.stringify(data, null, 2)}</pre></div>`;
+                }
+            } catch (error) {
+                resultBox.innerHTML = `<div class="error">❌ ${error.message}</div>`;
+            }
+        }
+    </script>
+</body>
+
+</html>

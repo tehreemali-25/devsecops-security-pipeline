@@ -1,0 +1,20 @@
+# OWASP ZAP Configuration Rules
+# Format: rule_id	WARN|IGNORE|FAIL	description
+#
+# This file defines how ZAP should handle specific findings
+# WARN: Generate a warning (non-blocking)
+# IGNORE: Ignore this finding completely
+# FAIL: Fail the build on this finding
+
+# Example rules:
+# 10021	IGNORE	X-Content-Type-Options header missing
+# 10020	WARN	X-Frame-Options header missing  
+# 40012	FAIL	Cross Site Scripting (Reflected)
+# 40014	FAIL	Cross Site Scripting (Persistent)
+# 90022	FAIL	Application Error Disclosure
+
+# For this demo, we'll be lenient and mostly WARN
+10021	WARN	X-Content-Type-Options header missing
+10020	WARN	X-Frame-Options header not set
+10096	WARN	Timestamp Disclosure
+10109	WARN	Modern Web Application

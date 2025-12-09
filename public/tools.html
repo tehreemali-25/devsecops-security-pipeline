@@ -1,0 +1,230 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Security Tools - DevSecOps</title>
+    <link rel="stylesheet" href="style.css">
+    <link rel="stylesheet" href="pages.css">
+</head>
+
+<body>
+    <div class="container">
+        <header>
+            <div class="logo">🔒 DevSecOps</div>
+            <div class="subtitle">Automated Security Testing Pipeline</div>
+            <nav class="main-nav">
+                <a href="index.html" class="nav-link">Home</a>
+                <a href="tools.html" class="nav-link active">Security Tools</a>
+                <a href="demo.html" class="nav-link">Live Demo</a>
+                <a href="documentation.html" class="nav-link">Documentation</a>
+            </nav>
+        </header>
+
+        <!-- Tools Hero -->
+        <section class="tools-hero">
+            <h1>🛡️ Security Arsenal</h1>
+            <p>Five powerful tools protecting your code</p>
+        </section>
+
+        <!-- Tool Cards -->
+        <section class="tool-showcase">
+            <div class="showcase-card" id="owasp">
+                <div class="tool-header">
+                    <div class="showcase-icon">🔍</div>
+                    <div>
+                        <h2>OWASP Dependency-Check</h2>
+                        <div class="type-badge sca">SCA</div>
+                    </div>
+                </div>
+                <div class="tool-body">
+                    <div class="what-box">
+                        <h3>What It Does</h3>
+                        <p>Scans dependencies for known vulnerabilities</p>
+                    </div>
+                    <div class="why-box">
+                        <h3>Why It Matters</h3>
+                        <p>70-90% of code comes from libraries - must check for CVEs</p>
+                    </div>
+                    <div class="stats-row">
+                        <div class="tool-stat">
+                            <div class="stat-value">NVD</div>
+                            <div class="stat-label">Database</div>
+                        </div>
+                        <div class="tool-stat">
+                            <div class="stat-value">CVSS ≥7</div>
+                            <div class="stat-label">Fails Build</div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <div class="showcase-card" id="snyk">
+                <div class="tool-header">
+                    <div class="showcase-icon">🔎</div>
+                    <div>
+                        <h2>Snyk</h2>
+                        <div class="type-badge sca">SCA</div>
+                    </div>
+                </div>
+                <div class="tool-body">
+                    <div class="what-box">
+                        <h3>What It Does</h3>
+                        <p>Advanced dependency scanning with fix suggestions</p>
+                    </div>
+                    <div class="why-box">
+                        <h3>Why It Matters</h3>
+                        <p>Real-time database + automated remediation advice</p>
+                    </div>
+                    <div class="stats-row">
+                        <div class="tool-stat">
+                            <div class="stat-value">Real-time</div>
+                            <div class="stat-label">Updates</div>
+                        </div>
+                        <div class="tool-stat">
+                            <div class="stat-value">Auto-fix</div>
+                            <div class="stat-label">Suggestions</div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <div class="showcase-card" id="sonarqube">
+                <div class="tool-header">
+                    <div class="showcase-icon">📊</div>
+                    <div>
+                        <h2>SonarQube</h2>
+                        <div class="type-badge sast">SAST</div>
+                    </div>
+                </div>
+                <div class="tool-body">
+                    <div class="what-box">
+                        <h3>What It Does</h3>
+                        <p>Analyzes source code for security issues</p>
+                    </div>
+                    <div class="why-box">
+                        <h3>Why It Matters</h3>
+                        <p>Catches SQL injection, XSS, and code quality issues</p>
+                    </div>
+                    <div class="stats-row">
+                        <div class="tool-stat">
+                            <div class="stat-value">≥80%</div>
+                            <div class="stat-label">Code Coverage</div>
+                        </div>
+                        <div class="tool-stat">
+                            <div class="stat-value">Quality</div>
+                            <div class="stat-label">Gates</div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <div class="showcase-card" id="trivy">
+                <div class="tool-header">
+                    <div class="showcase-icon">🛡️</div>
+                    <div>
+                        <h2>Trivy</h2>
+                        <div class="type-badge container">Container</div>
+                    </div>
+                </div>
+                <div class="tool-body">
+                    <div class="what-box">
+                        <h3>What It Does</h3>
+                        <p>Scans Docker images and OS packages</p>
+                    </div>
+                    <div class="why-box">
+                        <h3>Why It Matters</h3>
+                        <p>Container images include full OS with vulnerabilities</p>
+                    </div>
+                    <div class="stats-row">
+                        <div class="tool-stat">
+                            <div class="stat-value">Layer</div>
+                            <div class="stat-label">Scanning</div>
+                        </div>
+                        <div class="tool-stat">
+                            <div class="stat-value">Secrets</div>
+                            <div class="stat-label">Detection</div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <div class="showcase-card" id="zap">
+                <div class="tool-header">
+                    <div class="showcase-icon">⚡</div>
+                    <div>
+                        <h2>OWASP ZAP</h2>
+                        <div class="type-badge dast">DAST</div>
+                    </div>
+                </div>
+                <div class="tool-body">
+                    <div class="what-box">
+                        <h3>What It Does</h3>
+                        <p>Tests running applications dynamically</p>
+                    </div>
+                    <div class="why-box">
+                        <h3>Why It Matters</h3>
+                        <p>Finds runtime vulnerabilities like XSS and CSRF</p>
+                    </div>
+                    <div class="stats-row">
+                        <div class="tool-stat">
+                            <div class="stat-value">Runtime</div>
+                            <div class="stat-label">Testing</div>
+                        </div>
+                        <div class="tool-stat">
+                            <div class="stat-value">Active</div>
+                            <div class="stat-label">Scanning</div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </section>
+
+        <!-- Coverage Visual -->
+        <section class="coverage-visual">
+            <h2>Complete Coverage</h2>
+            <div class="coverage-grid">
+                <div class="coverage-item">
+                    <div class="coverage-icon">📦</div>
+                    <div class="coverage-title">Dependencies</div>
+                    <div class="coverage-tools">OWASP DC + Snyk</div>
+                </div>
+                <div class="coverage-item">
+                    <div class="coverage-icon">💻</div>
+                    <div class="coverage-title">Source Code</div>
+                    <div class="coverage-tools">SonarQube</div>
+                </div>
+                <div class="coverage-item">
+                    <div class="coverage-icon">🐳</div>
+                    <div class="coverage-title">Containers</div>
+                    <div class="coverage-tools">Trivy</div>
+                </div>
+                <div class="coverage-item">
+                    <div class="coverage-icon">⚡</div>
+                    <div class="coverage-title">Runtime</div>
+                    <div class="coverage-tools">OWASP ZAP</div>
+                </div>
+            </div>
+        </section>
+
+        <!-- CTA -->
+        <section class="cta">
+            <h2>See It In Action</h2>
+            <div class="cta-buttons">
+                <a href="demo.html" class="btn btn-primary">Try Live Demo</a>
+                <a href="documentation.html" class="btn btn-secondary">View Docs</a>
+            </div>
+        </section>
+
+        <footer>
+            <div class="footer-content">
+                <p><strong>Applied DevOps Project</strong></p>
+                <p>Security is not a feature, it's a mindset 🔐</p>
+            </div>
+        </footer>
+    </div>
+    <script src="script.js"></script>
+</body>
+
+</html>

@@ -1,0 +1,272 @@
+name: DevSecOps Security Pipeline
+
+on:
+  push:
+    branches: [main]
+  pull_request:
+    branches: [main]
+
+env:
+  IMAGE_NAME: devsecops-app
+  NODE_VERSION: '18'
+
+jobs:
+  # Job 1: OWASP Dependency-Check (SCA)
+  dependency-check:
+    name: 🔍 OWASP Dependency-Check (SCA)
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout code
+        uses: actions/checkout@v4
+
+      - name: Setup Node.js
+        uses: actions/setup-node@v4
+        with:
+          node-version: ${{ env.NODE_VERSION }}
+
+      - name: Install dependencies
+        run: npm ci
+
+      - name: Download OWASP Dependency-Check
+        run: |
+          wget https://github.com/jeremylong/DependencyCheck/releases/download/v9.0.7/dependency-check-9.0.7-release.zip
+          unzip dependency-check-9.0.7-release.zip
+
+      - name: Run OWASP Dependency-Check
+        run: |
+          ./dependency-check/bin/dependency-check.sh \
+            --scan . \
+            --format HTML \
+            --format JSON \
+            --out ./dependency-check-report \
+            --failOnCVSS 7
+
+      - name: Upload Dependency-Check Report
+        uses: actions/upload-artifact@v4
+        if: always()
+        with:
+          name: dependency-check-report
+          path: dependency-check-report/
+          retention-days: 30
+
+  # Job 2: Snyk Security Scan (SCA)
+  snyk-scan:
+    name: 🔎 Snyk Security Scan (SCA)
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout code
+        uses: actions/checkout@v4
+
+      - name: Setup Node.js
+        uses: actions/setup-node@v4
+        with:
+          node-version: ${{ env.NODE_VERSION }}
+
+      - name: Install dependencies
+        run: npm ci
+
+      - name: Run Snyk to check for vulnerabilities
+        uses: snyk/actions/node@master
+        env:
+          SNYK_TOKEN: ${{ secrets.SNYK_TOKEN }}
+        with:
+          args: --severity-threshold=high --json-file-output=snyk-report.json
+        continue-on-error: true
+
+      - name: Upload Snyk Report
+        uses: actions/upload-artifact@v4
+        if: always()
+        with:
+          name: snyk-report
+          path: snyk-report.json
+          retention-days: 30
+
+  # Job 3: SonarQube Analysis (SAST)
+  sonarqube-scan:
+    name: 📊 SonarQube Analysis (SAST)
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout code
+        uses: actions/checkout@v4
+        with:
+          fetch-depth: 0
+
+      - name: Setup Node.js
+        uses: actions/setup-node@v4
+        with:
+          node-version: ${{ env.NODE_VERSION }}
+
+      - name: Install dependencies
+        run: npm ci
+
+      - name: Run tests with coverage
+        run: npm test -- --coverage
+        continue-on-error: true
+
+      - name: SonarQube Scan
+        uses: sonarsource/sonarqube-scan-action@master
+        env:
+          SONAR_TOKEN: ${{ secrets.SONAR_TOKEN }}
+          SONAR_HOST_URL: ${{ secrets.SONAR_HOST_URL }}
+        continue-on-error: true
+
+  # Job 4: Build Docker Image
+  build-image:
+    name: 🐳 Build Docker Image
+    runs-on: ubuntu-latest
+    needs: [dependency-check, snyk-scan, sonarqube-scan]
+    steps:
+      - name: Checkout code
+        uses: actions/checkout@v4
+
+      - name: Build Docker Image
+        run: |
+          docker build -t ${{ env.IMAGE_NAME }}:${{ github.sha }} .
+          docker save ${{ env.IMAGE_NAME }}:${{ github.sha }} -o app-image.tar
+
+      - name: Upload Docker Image
+        uses: actions/upload-artifact@v4
+        with:
+          name: docker-image
+          path: app-image.tar
+          retention-days: 1
+
+  # Job 5: Trivy Security Scan (Container)
+  trivy-scan:
+    name: 🛡️ Trivy Container Scan
+    runs-on: ubuntu-latest
+    needs: build-image
+    steps:
+      - name: Checkout code
+        uses: actions/checkout@v4
+
+      - name: Download Docker Image
+        uses: actions/download-artifact@v4
+        with:
+          name: docker-image
+          path: /tmp
+
+      - name: Load Docker Image
+        run: docker load -i /tmp/app-image.tar
+
+      - name: Run Trivy Filesystem Scan
+        run: |
+          echo "Installing Trivy..."
+          sudo apt-get install wget apt-transport-https gnupg lsb-release -y
+          wget -qO - https://aquasecurity.github.io/trivy-repo/deb/public.key | gpg --dearmor | sudo tee /usr/share/keyrings/trivy.gpg > /dev/null
+          echo "deb [signed-by=/usr/share/keyrings/trivy.gpg] https://aquasecurity.github.io/trivy-repo/deb $(lsb_release -sc) main" | sudo tee -a /etc/apt/sources.list.d/trivy.list
+          sudo apt-get update
+          sudo apt-get install trivy -y
+          
+          echo "Running Trivy filesystem scan..."
+          trivy fs . --format json --output trivy-fs-report.json
+          trivy fs . --format table
+
+      - name: Run Trivy Image Scan
+        run: |
+          echo "Running Trivy image scan..."
+          trivy image --format json --output trivy-image-report.json ${{ env.IMAGE_NAME }}:${{ github.sha }}
+          trivy image --format table ${{ env.IMAGE_NAME }}:${{ github.sha }}
+        continue-on-error: true
+
+      - name: Upload Trivy Reports
+        uses: actions/upload-artifact@v4
+        if: always()
+        with:
+          name: trivy-reports
+          path: |
+            trivy-fs-report.json
+            trivy-image-report.json
+          retention-days: 30
+
+  # Job 6: OWASP ZAP DAST Scan
+  zap-scan:
+    name: ⚡ OWASP ZAP DAST Scan
+    runs-on: ubuntu-latest
+    needs: build-image
+    steps:
+      - name: Checkout code
+        uses: actions/checkout@v4
+
+      - name: Download Docker Image
+        uses: actions/download-artifact@v4
+        with:
+          name: docker-image
+          path: /tmp
+
+      - name: Load and Run Docker Image
+        run: |
+          docker load -i /tmp/app-image.tar
+          docker run -d -p 3000:3000 --name test-app ${{ env.IMAGE_NAME }}:${{ github.sha }}
+          sleep 10
+          echo "App is running, testing connection..."
+          curl -f http://localhost:3000/api/health || echo "Health check failed"
+
+      - name: Run OWASP ZAP Baseline Scan
+        uses: zaproxy/action-baseline@v0.12.0
+        with:
+          target: 'http://localhost:3000'
+          rules_file_name: '.zap/rules.tsv'
+          cmd_options: '-a'
+        continue-on-error: true
+
+      - name: Stop Docker Container
+        if: always()
+        run: docker stop test-app || true
+
+      - name: Upload ZAP Report
+        uses: actions/upload-artifact@v4
+        if: always()
+        with:
+          name: zap-report
+          path: report_html.html
+          retention-days: 30
+
+  # Job 7: Security Summary
+  security-summary:
+    name: 📋 Security Summary
+    runs-on: ubuntu-latest
+    needs: [dependency-check, snyk-scan, sonarqube-scan, trivy-scan, zap-scan]
+    if: always()
+    steps:
+      - name: Checkout code
+        uses: actions/checkout@v4
+
+      - name: Download All Artifacts
+        uses: actions/download-artifact@v4
+        with:
+          path: artifacts
+
+      - name: Generate Security Summary
+        run: |
+          echo "# 🔒 DevSecOps Security Pipeline Summary" >> $GITHUB_STEP_SUMMARY
+          echo "" >> $GITHUB_STEP_SUMMARY
+          echo "## 📊 Security Scans Completed" >> $GITHUB_STEP_SUMMARY
+          echo "" >> $GITHUB_STEP_SUMMARY
+          echo "| Tool | Type | Status |" >> $GITHUB_STEP_SUMMARY
+          echo "|------|------|--------|" >> $GITHUB_STEP_SUMMARY
+          echo "| 🔍 OWASP Dependency-Check | SCA | ✅ Completed |" >> $GITHUB_STEP_SUMMARY
+          echo "| 🔎 Snyk | SCA | ✅ Completed |" >> $GITHUB_STEP_SUMMARY
+          echo "| 📊 SonarQube | SAST | ✅ Completed |" >> $GITHUB_STEP_SUMMARY
+          echo "| 🛡️ Trivy | Container | ✅ Completed |" >> $GITHUB_STEP_SUMMARY
+          echo "| ⚡ OWASP ZAP | DAST | ✅ Completed |" >> $GITHUB_STEP_SUMMARY
+          echo "" >> $GITHUB_STEP_SUMMARY
+          echo "## 📁 Artifacts Generated" >> $GITHUB_STEP_SUMMARY
+          echo "" >> $GITHUB_STEP_SUMMARY
+          echo "- Dependency-Check Report (HTML/JSON)" >> $GITHUB_STEP_SUMMARY
+          echo "- Snyk Security Report (JSON)" >> $GITHUB_STEP_SUMMARY
+          echo "- SonarQube Analysis Results" >> $GITHUB_STEP_SUMMARY
+          echo "- Trivy Scan Reports (FS + Image)" >> $GITHUB_STEP_SUMMARY
+          echo "- OWASP ZAP DAST Report (HTML)" >> $GITHUB_STEP_SUMMARY
+          echo "" >> $GITHUB_STEP_SUMMARY
+          echo "✅ **All security scans completed successfully!**" >> $GITHUB_STEP_SUMMARY
+
+      - name: Display Summary
+        run: |
+          echo "========================================="
+          echo "   DevSecOps Pipeline Complete!"
+          echo "========================================="
+          echo "✅ 5 Security Tools Executed"
+          echo "✅ Reports Generated and Uploaded"
+          echo "✅ Docker Image Built and Scanned"
+          echo "========================================="

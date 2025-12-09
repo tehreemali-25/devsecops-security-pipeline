@@ -1,0 +1,200 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>DevSecOps - Automated Security Testing</title>
+    <link rel="stylesheet" href="style.css">
+</head>
+
+<body>
+    <div class="container">
+        <header>
+            <div class="logo">🔒 DevSecOps</div>
+            <div class="subtitle">Automated Security Testing Pipeline</div>
+            <nav class="main-nav">
+                <a href="index.html" class="nav-link active">Home</a>
+                <a href="tools.html" class="nav-link">Security Tools</a>
+                <a href="demo.html" class="nav-link">Live Demo</a>
+                <a href="documentation.html" class="nav-link">Documentation</a>
+            </nav>
+        </header>
+
+        <section class="hero">
+            <h1>Shifting Left: Security from Day One</h1>
+            <p class="tagline">Preventing breaches like Equifax through automated security testing</p>
+        </section>
+
+        <section class="problem">
+            <div class="problem-card">
+                <h2>💰 The Equifax Breach</h2>
+                <div class="stats">
+                    <div class="stat">
+                        <div class="stat-value">$1.4B</div>
+                        <div class="stat-label">In Fines</div>
+                    </div>
+                    <div class="stat">
+                        <div class="stat-value">147M</div>
+                        <div class="stat-label">People Affected</div>
+                    </div>
+                    <div class="stat">
+                        <div class="stat-value">100x</div>
+                        <div class="stat-label">Cost to Fix Later</div>
+                    </div>
+                </div>
+                <p><strong>The Problem:</strong> Known vulnerability went unpatched. Late-stage security is expensive
+                    and risky.</p>
+            </div>
+        </section>
+
+        <section class="solution">
+            <h2>Our Solution: Five-Layer Security</h2>
+            <div class="tools-grid">
+                <a href="tools.html#owasp" class="tool-card-link">
+                    <div class="tool-card">
+                        <div class="tool-icon">🔍</div>
+                        <h3>OWASP Dependency-Check</h3>
+                        <p class="tool-type">Software Composition Analysis (SCA)</p>
+                        <p>Scans dependencies against the National Vulnerability Database.</p>
+                        <span class="learn-more">Learn More →</span>
+                    </div>
+                </a>
+                <a href="tools.html#snyk" class="tool-card-link">
+                    <div class="tool-card">
+                        <div class="tool-icon">🔎</div>
+                        <h3>Snyk</h3>
+                        <p class="tool-type">Advanced SCA & License Scanning</p>
+                        <p>Real-time vulnerability database with automated fix suggestions.</p>
+                        <span class="learn-more">Learn More →</span>
+                    </div>
+                </a>
+                <a href="tools.html#sonarqube" class="tool-card-link">
+                    <div class="tool-card">
+                        <div class="tool-icon">📊</div>
+                        <h3>SonarQube</h3>
+                        <p class="tool-type">Static Application Security Testing (SAST)</p>
+                        <p>Analyzes source code for security vulnerabilities and quality issues.</p>
+                        <span class="learn-more">Learn More →</span>
+                    </div>
+                </a>
+                <a href="tools.html#trivy" class="tool-card-link">
+                    <div class="tool-card">
+                        <div class="tool-icon">🛡️</div>
+                        <h3>Trivy</h3>
+                        <p class="tool-type">Container Security Scanner</p>
+                        <p>Scans containers and filesystems for OS vulnerabilities.</p>
+                        <span class="learn-more">Learn More →</span>
+                    </div>
+                </a>
+                <a href="tools.html#zap" class="tool-card-link">
+                    <div class="tool-card">
+                        <div class="tool-icon">⚡</div>
+                        <h3>OWASP ZAP</h3>
+                        <p class="tool-type">Dynamic Application Security Testing (DAST)</p>
+                        <p>Tests running applications for XSS, SQL injection, and CSRF.</p>
+                        <span class="learn-more">Learn More →</span>
+                    </div>
+                </a>
+            </div>
+        </section>
+
+        <section class="benefits">
+            <h2>Shift-Left Benefits</h2>
+            <div class="benefits-grid">
+                <div class="benefit">
+                    <span class="benefit-icon">✅</span>
+                    <strong>Early Detection</strong>
+                    <p>Find vulnerabilities before production</p>
+                </div>
+                <div class="benefit">
+                    <span class="benefit-icon">💰</span>
+                    <strong>Cost Savings</strong>
+                    <p>100x cheaper to fix in development</p>
+                </div>
+                <div class="benefit">
+                    <span class="benefit-icon">⚡</span>
+                    <strong>Faster Delivery</strong>
+                    <p>No last-minute security delays</p>
+                </div>
+                <div class="benefit">
+                    <span class="benefit-icon">🔒</span>
+                    <strong>Better Security</strong>
+                    <p>Five automated protection layers</p>
+                </div>
+            </div>
+        </section>
+
+        <section class="api-demo">
+            <h2>Try the API</h2>
+            <div class="endpoints">
+                <div class="endpoint">
+                    <span class="method get">GET</span>
+                    <a href="/api/health" target="_blank">/api/health</a>
+                    <span class="description">Health check</span>
+                </div>
+                <div class="endpoint">
+                    <span class="method get">GET</span>
+                    <a href="/api/docs" target="_blank">/api/docs</a>
+                    <span class="description">API documentation</span>
+                </div>
+                <div class="endpoint">
+                    <span class="method post">POST</span>
+                    <span class="path">/api/auth/register</span>
+                    <span class="description">Register new user</span>
+                </div>
+                <div class="endpoint">
+                    <span class="method post">POST</span>
+                    <span class="path">/api/auth/login</span>
+                    <span class="description">User login</span>
+                </div>
+            </div>
+        </section>
+
+        <section class="pipeline">
+            <h2>CI/CD Security Pipeline</h2>
+            <div class="pipeline-flow">
+                <div class="pipeline-step">
+                    <div class="step-number">1</div>
+                    <div class="step-name">Code Commit</div>
+                </div>
+                <div class="arrow">→</div>
+                <div class="pipeline-step">
+                    <div class="step-number">2-4</div>
+                    <div class="step-name">Security Scans</div>
+                </div>
+                <div class="arrow">→</div>
+                <div class="pipeline-step">
+                    <div class="step-number">5</div>
+                    <div class="step-name">Build Image</div>
+                </div>
+                <div class="arrow">→</div>
+                <div class="pipeline-step">
+                    <div class="step-number">6-7</div>
+                    <div class="step-name">Test & Validate</div>
+                </div>
+                <div class="arrow">→</div>
+                <div class="pipeline-step success">
+                    <div class="step-number">✓</div>
+                    <div class="step-name">Deploy</div>
+                </div>
+            </div>
+            <p class="pipeline-note">7 automated security jobs run on every commit via GitHub Actions</p>
+            <div class="pipeline-details">
+                <p><strong>Pipeline Jobs:</strong> OWASP Dependency-Check → Snyk → SonarQube → Build → Trivy → OWASP ZAP
+                    → Summary</p>
+            </div>
+        </section>
+
+        <footer>
+            <div class="footer-content">
+                <p><strong>Applied DevOps Project</strong> - Automated Security Testing in DevSecOps Pipeline</p>
+                <p>Security is not a feature, it's a mindset 🔐</p>
+            </div>
+        </footer>
+    </div>
+
+    <script src="script.js"></script>
+</body>
+
+</html>
