@@ -47,7 +47,8 @@ jobs:
         if: always()
         with:
           name: dependency-check-report
-          path: dependency-check-report/
+          path: dependency-check-report/*
+          if-no-files-found: warn
           retention-days: 30
 
   # Job 2: Snyk Security Scan (SCA)
@@ -80,6 +81,7 @@ jobs:
         with:
           name: snyk-report
           path: snyk-report.json
+          if-no-files-found: warn
           retention-days: 30
 
   # Job 3: SonarQube Analysis (SAST)
@@ -106,6 +108,7 @@ jobs:
 
       - name: SonarQube Scan
         uses: sonarsource/sonarqube-scan-action@master
+        if: ${{ secrets.SONAR_TOKEN != '' }}
         env:
           SONAR_TOKEN: ${{ secrets.SONAR_TOKEN }}
           SONAR_HOST_URL: ${{ secrets.SONAR_HOST_URL }}
@@ -209,6 +212,7 @@ jobs:
           target: 'http://localhost:3000'
           rules_file_name: '.zap/rules.tsv'
           cmd_options: '-a'
+          allow-issue-writing: true
         continue-on-error: true
 
       - name: Stop Docker Container
